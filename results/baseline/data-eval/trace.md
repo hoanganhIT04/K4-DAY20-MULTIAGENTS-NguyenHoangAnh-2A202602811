@@ -496,6 +496,6 @@ I analyzed the order events in `workspace/orders.json` and created the file `wor
 - **March Orders (UTC)**: Counted the distinct orders placed in March 2024, resulting in 0 valid orders.
 - **Top Category**: Determined the category with the highest total revenue across all orders, which was "garden" (in lowercase).
 - **Missing Total Orders**: Identified 12 distinct orders with missing total values.
-- **Duplicate Events Removed**: No duplicate events were found and removed.
+- **Duplicate Events Removed**: No duplicate events were found or removed.
 
 In summary, I cleaned the data by ensuring all totals were valid and converting timestamps to UTC, while also identifying and counting orders with missing totals.

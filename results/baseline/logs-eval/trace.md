@@ -128,9 +128,9 @@ I parsed the `workspace/worker.log` file to extract error entries based on the s
 3. **Extract Information**:
    - **Timestamp Conversion**: Converted the timestamps to UTC format (`YYYY-MM-DDTHH:MM:SSZ`).
    - **Level Formatting**: Converted the log level to uppercase.
-   - **Message Extraction**: Extracted the message from the last part of the log entry.
-   - **Repeat Count Calculation**: Counted the occurrences of each error, including the "last message repeated N times" lines.
+   - **Message Extraction**: Extracted the message from the last part of the log entry after the last `|` separator.
+   - **Repeat Count Calculation**: Counted the occurrences of each error, including the additional counts from the `-- last message repeated N times --` lines.
 4. **Count by Service**: Summed the repeat counts for each service to create the `counts_by_service` object.
 5. **Write to JSON**: Compiled the results into the specified JSON structure and wrote it to `workspace/errors.json`.
 
-The resulting JSON file contains the errors and their counts by service, formatted according to the Acme log-triage conventions.
+The resulting JSON file contains the structured error data as required.
