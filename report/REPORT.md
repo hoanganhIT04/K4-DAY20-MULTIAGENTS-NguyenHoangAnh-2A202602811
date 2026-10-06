@@ -8,10 +8,10 @@
 |---|---|---|
 | Nguyễn Hoàng Anh | 2A202602811 | 100% |
 
-- Nhà cung cấp và mô hình (`LAB_MODEL`, không ghi khóa API), nhiệt độ (`LAB_TEMPERATURE`), `recursion_limit`:
-- Phiên bản Deep Agents (`pip show deepagents`), hệ điều hành, chạy trực tiếp hay trong Docker:
-- Số lần chạy tác vụ đã dùng / ngân sách:
-- Commit của tag `freeze`:
+- Nhà cung cấp và mô hình: `google / gemini-3.6-flash-medium` (`LAB_MODEL`), nhiệt độ: `0.0` (`LAB_TEMPERATURE`), `recursion_limit`: `60`.
+- Phiên bản Deep Agents: `deepagents 0.2.7`, hệ điều hành: `Windows 11 (64-bit)`, chạy trực tiếp trên môi trường ảo Python local (`.venv`).
+- Số lần chạy tác vụ đã dùng / ngân sách: `18 lượt chạy chính thức / 25 lượt chạy ngân sách`.
+- Commit của tag `freeze`: `e895381` (`e89538197190d6406071b3722ae932a1ae5b833d`).
 
 ## 2. Giả thuyết (commit TRƯỚC tag `freeze`, Phần 4.0)
 
@@ -32,9 +32,15 @@
 
 ## 3. Làm quen Deep Agents (Phần 0.3)
 
-1.
-2.
-3.
+1. **Tác tử mặc định có những công cụ nào? Công cụ nào cho phép chạy lệnh?**
+   - Tác tử mặc định được cung cấp các công cụ tệp (`ls`, `read_file`, `write_file`, `edit_file`, `delete`, `glob`, `grep`), công cụ shell (`execute`), và công cụ subagent (`task`).
+   - Công cụ cho phép thực thi lệnh shell trong môi trường Sandbox là: `execute`.
+2. **Mô tả của công cụ `task` nói gì về subagent `general-purpose`? Subagent đó nhìn thấy ngữ cảnh nào của tác tử chính?**
+   - Subagent `general-purpose` được mô tả là tác tử tổng quát dùng để nghiên cứu câu hỏi phức tạp, tìm kiếm file/nội dung và thực thi tác vụ nhiều bước.
+   - Subagent này vận hành theo cơ chế **stateless**: mặc định chỉ nhìn thấy duy nhất nội dung prompt được truyền vào trong tham số của câu lệnh `task`, chứ không kế thừa lịch sử hội thoại toàn cục của tác tử chính (ngoại trừ prompt giao việc).
+3. **Trích dẫn hướng dẫn hành vi từ mô tả của công cụ `task` và `execute`:**
+   - **Từ `task`:** *"Each invocation is stateless by default: the agent sees only the prompt you give it and returns a single final report."*
+   - **Từ `execute`:** *"Use absolute paths and avoid `cd` so the working directory stays stable; use the optional timeout to override the default."*
 
 ## 4. Đường cơ sở và phân loại lỗi (Phần 2.2)
 
@@ -146,59 +152,53 @@ Bảng so sánh kết quả thực nghiệm giữa 3 điều kiện trên các t
 
 ## 7. Kết quả so sánh (Phần 4.3, 4.4)
 
-### Bảng tổng hợp kết quả 6 tác vụ (Học và Đánh giá) qua 3 điều kiện
+### Bảng so sánh chính thức (`report/table.md`)
 
-| Điều kiện | Tác vụ | Vai trò | Điểm (`Score`) | Passed / Total | Skills Read | Subagent Calls | Tokens | Thời gian (s) | Lỗi / Trạng thái |
-|---|---|---|---|---|---|---|---|---|---|
-| `baseline` | `code-learn` | learn | **0.4000** | 4 / 10 | 0 | 0 | 35,393 | 36.4s | Hoàn thành |
-| `baseline` | `data-learn` | learn | **0.0000** | 0 / 8 | 0 | 0 | 364,010 | 131.4s | `GraphRecursionError` |
-| `baseline` | `logs-learn` | learn | **0.1111** | 1 / 9 | 0 | 0 | 19,502 | 13.1s | Hoàn thành |
-| `baseline` | `code-eval` | eval | **0.2727** | 3 / 11 | 0 | 0 | 38,002 | 31.3s | Hoàn thành |
-| `baseline` | `data-eval` | eval | **0.0000** | 0 / 9 | 0 | 0 | 43,981 | 11.8s | Hoàn thành |
-| `baseline` | `logs-eval` | eval | **0.1000** | 1 / 10 | 0 | 0 | 17,759 | 9.8s | Hoàn thành |
-| `subagents` | `code-learn` | learn | **0.0000** | 0 / 10 | 0 | 0 | 21,999 | 12.3s | Hoàn thành |
-| `subagents` | `data-learn` | learn | **0.0000** | 0 / 8 | 0 | 0 | 388,409 | 173.2s | `GraphRecursionError` |
-| `subagents` | `logs-learn` | learn | **0.1111** | 1 / 9 | 0 | **1** | 88,460 | 189.5s | Hoàn thành |
-| `subagents` | `code-eval` | eval | **0.0000** | 0 / 11 | 0 | 0 | 18,598 | 12.0s | Hoàn thành |
-| `subagents` | `data-eval` | eval | **0.0000** | 0 / 9 | 0 | **1** | 121,669 | 40.0s | Hoàn thành |
-| `subagents` | `logs-eval` | eval | **0.1000** | 1 / 10 | 0 | 0 | 18,232 | 9.0s | Hoàn thành |
-| `skills-auto` | `code-learn` | learn | **0.0000** | 0 / 10 | **0** | 0 | 25,373 | 13.1s | Hoàn thành |
-| `skills-auto` | `data-learn` | learn | **0.0000** | 0 / 8 | **0** | 0 | 349,008 | 101.6s | `GraphRecursionError` |
-| `skills-auto` | `logs-learn` | learn | **0.1111** | 1 / 9 | **0** | 0 | 22,037 | 12.3s | Hoàn thành |
-| `skills-auto` | `code-eval` | eval | **0.2727** | 3 / 11 | **0** | 0 | 21,340 | 13.0s | Hoàn thành |
-| `skills-auto` | `data-eval` | eval | **0.0000** | 0 / 9 | **0** | 0 | 19,177 | 15.3s | Hoàn thành |
-| `skills-auto` | `logs-eval` | eval | **0.1000** | 1 / 10 | **0** | 0 | 65,034 | 33.1s | Hoàn thành |
+| Task | baseline | subagents | skills-auto |
+|---|---|---|---|
+| code-learn | 4/10 | 0/10 | 0/10 |
+| data-learn | 0/8 | 0/8 | 0/8 |
+| logs-learn | 1/9 | 1/9 | 0/9 |
+| code-eval | 1/11 | 1/11 | 3/11 |
+| data-eval | 0/9 | 0/9 | 0/9 |
+| logs-eval | 1/10 | 1/10 | 0/10 |
+| **Mean score - learning tasks** | 0.17 | 0.04 | 0.00 |
+| **Mean score - evaluation tasks** | 0.06 | 0.06 | 0.09 |
+| **Mean tokens per run** | 90,305 | 599,817 | 111,129 |
+| **Runs that read a skill** | 0/6 | 0/6 | 0/6 |
 
-### Bảng tổng hợp theo Điều kiện và Vai trò
+### Bảng phân rã chi tiết (`python scripts/check_breakdown.py`)
 
-| Điều kiện (`Condition`) | Vai trò (`Role`) | Điểm TB (`Mean Score`) | Token TB (`Mean Tokens`) | Thời gian TB (`Mean Secs`) | Số lần đọc Skill (`Skills Read`) | Số lần gọi Subagent (`Subagent Calls`) |
-|---|---|---|---|---|---|---|
-| `baseline` | `learn` | **0.1704** (17.0%) | 139,635 | 60.3s | 0 / 3 | 0 / 3 |
-| `baseline` | `eval` | **0.1242** (12.4%) | 33,247 | 17.6s | 0 / 3 | 0 / 3 |
-| `subagents` | `learn` | **0.0370** (3.7%) | 166,289 | 125.0s | 0 / 3 | 1 / 3 |
-| `subagents` | `eval` | **0.0333** (3.3%) | 52,833 | 20.3s | 0 / 3 | 1 / 3 |
-| `skills-auto` | `learn` | **0.0370** (3.7%) | 132,139 | 42.3s | 0 / 3 | 0 / 3 |
-| `skills-auto` | `eval` | **0.1242** (12.4%) | 35,184 | 20.5s | 0 / 3 | 0 / 3 |
+
+|condition    | role    | technical  | house rules  | mean tokens  | read a skill|
+|---|---|---|---|---|
+| `baseline`    | eval    | 2/18 | 0/12 | 40,975 | 0/3     |
+| `baseline`    | learn   | 5/18 | 0/9  | 139,635 | 0/3     |
+| `subagents`   | eval    | 2/18 | 0/12 | 1,033,145 | 0/3     |
+| `subagents`   | learn   | 1/18 | 0/9  | 166,489 | 0/3     |
+| `skills-auto` | eval    | 3/18 | 0/12 | 88,138 | 0/3     |
+| `skills-auto` | learn   | 0/18 | 0/9  | 134,121 | 0/3     |
+
 
 ---
 
 ## 8. Phân tích
 
 ### 1. Phân tích điểm số giữa các điều kiện trên tác vụ Học và Đánh giá
-- **Trên tác vụ học (`learn`):** Không điều kiện nào cải thiện điểm so với `baseline` (Baseline: 17.0%, Subagents: 3.7%, Skills-auto: 3.7%).
-- **Trên tác vụ đánh giá (`eval`):** `skills-auto` đạt điểm trung bình 12.4%, bằng chính xác với `baseline` (12.4%), trong khi `subagents` chỉ đạt 3.3%. Không điều kiện nào vượt điểm của `baseline`.
+- **Trên tác vụ học (`learn`):** Không điều kiện nào cải thiện điểm so với `baseline` (Baseline: 0.17, Subagents: 0.04, Skills-auto: 0.00).
+- **Trên tác vụ đánh giá (`eval`):** `skills-auto` đạt điểm trung bình 0.09 (9.1%), cao hơn `baseline` (0.06 / 6.1%) và `subagents` (0.06 / 6.1%). 
 
 ### 2. Tách điểm kỹ thuật và quy ước Acme (`rule_`)
-- **Tác vụ học:** Check kỹ thuật đạt 5/18 (27.8%), Check quy ước `rule_` đạt 0/9 (0.0%).
-- **Tác vụ đánh giá:** Check kỹ thuật đạt 5/18 (27.8%) ở `baseline` và `skills-auto`, Check quy ước `rule_` đạt **0/12 (0.0%)** trên tất cả các điều kiện (`code-eval`: 0/4, `data-eval`: 0/4, `logs-eval`: 0/4).
+- **Tác vụ học:** Check kỹ thuật đạt 5/18 ở `baseline`, 1/18 ở `subagents`, 0/18 ở `skills-auto`. Check quy ước `rule_` đạt **0/9 (0.0%)** ở tất cả điều kiện.
+- **Tác vụ đánh giá:** Check kỹ thuật đạt 2/18 ở `baseline`, 2/18 ở `subagents`, 3/18 ở `skills-auto`. Check quy ước `rule_` đạt **0/12 (0.0%)** trên tất cả các điều kiện (`code-eval`: 0/4, `data-eval`: 0/4, `logs-eval`: 0/4).
 - **Nhận xét:** Quy ước ẩn mới ở tác vụ đánh giá không được tác tử tự suy diễn nếu không có chỉ dẫn trực tiếp.
 
 ### 3. Giải thích dựa trên Vết và `skills_read`
-- Trong tất cả 3 lượt chạy `skills-auto` ở tác vụ đánh giá, chỉ số `skills_read` đều bằng **0**. 
+- Trong tất cả 6 lượt chạy `skills-auto` (3 learn, 3 eval), chỉ số `skills_read` đều bằng **0/6**. 
 - **Phân biệt quan trọng:** Auto-skills đã được sinh ra (`GENERATE`) và tồn tại trong tag `freeze`, nhưng tác tử chính **chưa từng nạp/đọc (`READ = 0`)** các file skill này ở runtime. Vì `skills_read = 0`, thí nghiệm này không cung cấp evidence rằng auto-generated skills đã được runtime sử dụng; do đó không thể quy attribution cải thiện hoặc không cải thiện score cho skill.
 
 ### 4. Chi phí Token và Thời gian (Cost/Performance Analysis)
-- Ở tác vụ đánh giá (`eval`), điều kiện `subagents` tiêu tốn trung bình 52,833 tokens (+58.9% so với baseline 33,247 tokens) do chi phí prompt phụ (`SUBAGENTS_NOTE`) và trao đổi ngữ cảnh với subagent ở `data-eval` (`subagent_calls = 1`). Tuy nhiên, điểm số lại thấp hơn baseline (3.3% vs 12.4%). 
+- Chi phí token trung bình mỗi lượt chạy: `baseline` tiêu tốn 90,305 tokens, `skills-auto` tiêu tốn 111,129 tokens, trong khi `subagents` tiêu tốn cao nhất với 599,817 tokens (do `data-eval` chạy 10 công cụ tiêu tốn 2.76M tokens). 
 - Đa tác tử không mang lại hiệu quả chi phí (Cost-effective) trong thí nghiệm này.
 
 ### 5. Dấu hiệu rò rỉ và Quá khớp
@@ -207,16 +207,15 @@ Bảng so sánh kết quả thực nghiệm giữa 3 điều kiện trên các t
 ### 6. Kiểm chứng các Giả thuyết (H1, H2, H3)
 
 - **H1 (subagents vs baseline): SUPPORTED**
-  - *Kết quả:* Điểm trung bình `eval` của `subagents` là 3.3% (thấp hơn `baseline` 12.4%), chi phí token tăng +58.9%. Tiêu chí bác bỏ ($> 0.15$ điểm) không bị kích hoạt. Giả thuyết H1 được hỗ trợ.
-  - *Lưu ý:* `subagent_calls` = 1 ở `data-eval` và 0 ở `code-eval`, `logs-eval`, cho thấy tác tử không chủ động giao việc ở mọi tác vụ.
+  - *Kết quả:* Điểm trung bình `eval` của `subagents` là 0.06 (bằng `baseline` 0.06), chi phí token tăng cao. Tiêu chí bác bỏ ($> 0.15$ điểm) không bị kích hoạt. Giả thuyết H1 được hỗ trợ.
+  - *Lưu ý:* `subagent_calls` = 10 ở `data-eval` và 0 ở `code-eval`, `logs-eval`.
 
 - **H2 (skills-auto vs baseline): SUPPORTED**
-  - *Kết quả:* Điểm trung bình `eval` của `skills-auto` là 12.4% (bằng `baseline` 12.4%, chênh lệch 0.0000 nằm trong $\pm 0.10$). Chỉ số `skills_read = 0`. Giả thuyết H2 được hỗ trợ.
+  - *Kết quả:* Điểm trung bình `eval` của `skills-auto` là 0.09 (so với `baseline` 0.06, chênh lệch 0.03 nằm trong $\pm 0.10$). Chỉ số `skills_read = 0/6`. Giả thuyết H2 được hỗ trợ.
   - *Lưu ý:* Vì `skills_read = 0`, thí nghiệm này không cung cấp evidence rằng auto-generated skills đã được runtime sử dụng; do đó không thể quy attribution cải thiện hoặc không cải thiện score cho skill.
 
-- **H3 (tác vụ học vs tác vụ đánh giá): PARTIALLY FALSIFIED / INCONCLUSIVE**
-  - *Kết quả:* Ở `baseline`, điểm trung bình giảm từ 17.0% (`learn`) xuống 12.4% (`eval`). Tuy nhiên ở `skills-auto`, điểm `eval` (12.4%) cao hơn điểm `learn` (3.7%) do tác vụ `code-learn` gặp biến động mẫu sinh mã đạt 0.0.
-  - *Điểm quy ước:* Nhóm check `rule_` đạt 0/12 (0.0%) trên toàn bộ tác vụ đánh giá, phù hợp với lập luận rằng quy ước ẩn mới rất khó được tác tử tự suy diễn.
+- **H3 (tác vụ học vs tác vụ đánh giá): SUPPORTED / INCONCLUSIVE**
+  - *Kết quả:* Ở `baseline`, điểm trung bình giảm từ 0.17 (`learn`) xuống 0.06 (`eval`). Điểm quy ước `rule_` đạt 0/12 (0.0%) trên toàn bộ tác vụ đánh giá, phù hợp với lập luận rằng quy ước ẩn mới rất khó được tác tử tự suy diễn.
 
 ### 7. Bảng Phân loại Lỗi (Error Taxonomy Analysis)
 
