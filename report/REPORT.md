@@ -171,13 +171,21 @@ Bảng so sánh kết quả thực nghiệm giữa 3 điều kiện trên các t
 
 
 |condition    | role    | technical  | house rules  | mean tokens  | read a skill|
+
 |---|---|---|---|---|
+
 | `baseline`    | eval    | 2/18 | 0/12 | 40,975 | 0/3     |
+
 | `baseline`    | learn   | 5/18 | 0/9  | 139,635 | 0/3     |
+
 | `subagents`   | eval    | 2/18 | 0/12 | 1,033,145 | 0/3     |
+
 | `subagents`   | learn   | 1/18 | 0/9  | 166,489 | 0/3     |
+
 | `skills-auto` | eval    | 3/18 | 0/12 | 88,138 | 0/3     |
+
 | `skills-auto` | learn   | 0/18 | 0/9  | 134,121 | 0/3     |
+
 
 
 ---
